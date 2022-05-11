@@ -1,7 +1,7 @@
 # Keybind System
 I suggest reading through this QuickStart to get a general idea, then reading documentation of other classes in this order found in the `/documentation` folder:
 
-* Keybind
+* [Keybind](/documentation/Keybind.html.md)
 * KeybindCategory
 * KeybindProfile
 * KeybindManager

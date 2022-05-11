@@ -2,10 +2,10 @@
 I suggest reading through this QuickStart to get a general idea, then reading documentation of other classes in this order found in the `/documentation` folder:
 
 * [Keybind](/documentation/Keybind.html.md)
-* KeybindCategory
-* KeybindProfile
-* KeybindManager
-* KeybindCapturer
+* [KeybindCategory](/documentation/KeybindCategory.html.md)
+* [KeybindProfile](/documentation/KeybindProfile.html.md)
+* [KeybindManager](/documentation/KeybindManager.html.md)
+* [KeybindCapturer](/documentation/KeybindCapturer.html.md)
 
 # Defaults Configuration
 First we should configure the initial setup for the keybind system:

@@ -1,4 +1,23 @@
 # Keybind System
+## Features
+
+* Different key sets based on whether "Classic Tibia Keys" is turned on or off. (In this system, they are 2 modes, Classic and Modern). In my server, Modern was one that triggered chat with Enter, but you can configure each profile or rename it as you like.
+* Can create multiple profiles, **Default** profile must always be present.
+* Profiles can switch onLogin based on the player's character name or vocation.
+* Allows developer to hook keybinds to any arbitrary anonymous Lua function.
+* Contains KeybindCapturer, a class that spawns a window that lets the user press some key and returns it.
+* Searchable list of functions.
+* Reset/Edit/Reset All buttons for keybinds.
+* ⚠️ Depending on which OTC version you use, you may need to update your `g_configs.create` function so that it attempts to load from the given path and if can't find a config by that name, creates a blank one instead. If you want to edit this behavior, search for `manager.config` in `03-keybind_manager.lua`.
+
+Example implementation:
+
+[Example](https://i.imgur.com/ospIWYd.png)
+
+## 💬
+It's a system I made quite a while ago but afaik should still work on newest OTC. 
+It's possible that I missed some minor function dependencies, in case you try to use it and find that to be the case, let me know and I'll upload the missing stuff to the repository.
+
 I suggest reading through this QuickStart to get a general idea, then reading documentation of other classes in this order found in the `/documentation` folder:
 
 * [Keybind](/documentation/Keybind.html.md)

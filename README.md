@@ -12,7 +12,7 @@
 
 Example implementation:
 
-[Example](https://i.imgur.com/ospIWYd.png)
+![Example](https://i.imgur.com/ospIWYd.png)
 
 ## 💬
 It's a system I made quite a while ago but afaik should still work on newest OTC. 

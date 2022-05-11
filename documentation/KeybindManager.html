@@ -1,0 +1,470 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KeybindManager</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="class-singleton-keybindmanager">Class (Singleton): KeybindManager</h1>
+<p>Creates a singleton KeybindManager,  who acts as an overseer and performs various operations on its subjects - Profiles, Categories and Keybinds.</p>
+<p>Alongside managerial operations over those 3 classes, it also adds some of its own global methods to ease administration of related systems.</p>
+<h2 id="attributes">Attributes:</h2>
+
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>categories</td>
+<td>table with <code>KeybindCategory</code> values</td>
+<td>Stores references to all existing <code>KeybindCategory</code> objects. If you need to know which KeybindCategories are registered in the system, this table should have them all.</td>
+</tr>
+<tr>
+<td>profiles</td>
+<td>table with <code>KeybindProfile</code> values</td>
+<td>Same as above, but for <code>KeybindProfile</code> objects.</td>
+</tr>
+<tr>
+<td>capturer</td>
+<td><code>UIWidget</code> [, nil]</td>
+<td>If the KeybindManager spawned any <code>CapturerWindow</code> uiwidgets using <code>:createCapturer</code>, the reference to that window will be stored in here. Only one should be allowed to exist at a time.</td>
+</tr>
+<tr>
+<td>config</td>
+<td><code>Config</code></td>
+<td>Stores a reference to they <code>Config</code> object spawned out of the /keybinds.otml file.</td>
+</tr>
+<tr>
+<td>keyComboMode</td>
+<td>number</td>
+<td>Using <code>config</code> to grab this number, it stores the number <em>KEYCOMBO_MODE_REGULAR (1)</em> or <em>KEYCOMBO_MODE_ALT (2)</em>. This number indicates which <strong>Chat Mode</strong> we are currently running.</td>
+</tr>
+<tr>
+<td>autoProfileSwitching</td>
+<td>bool</td>
+<td>Using <code>config</code> to grab this bool, it stores info about whether we currently have the <strong>Profile Auto Switching</strong> option toggled on or off.</td>
+</tr>
+<tr>
+<td>currentProfile</td>
+<td><code>KeybindProfile</code></td>
+<td>Stores a reference to the currently used <code>KeybindProfile</code>.</td>
+</tr>
+<tr>
+<td>defaultProfile</td>
+<td><code>KeybindProfile</code></td>
+<td>Stores a reference to the “Default” profile.</td>
+</tr>
+<tr>
+<td>keybindToWidgetAssociations</td>
+<td><code>table</code> with structured values</td>
+<td>Uses of <code>KeybindManager:setAssociationBetween(Keybind,Widget)</code> store a key <code>Keybind.categoryName</code> containing a table of <code>[Keybind.name] = {UIwidgets...}</code>  pairs as its value(s). If we ever have to destroy and recreate <code>Keybinds</code>, this table will let us remember which Keybinds should be reassociated with which widgets. More about <em>associations</em> in <code>setAssociationBetween</code> documentation.</td>
+</tr>
+<tr>
+<td>rememberedFocusBindings</td>
+<td><code>table</code> with structured values</td>
+<td>Uses of <code>Keybind:setWidgetToBindTo(widget)</code> store a key <code>Keybind.categoryName</code> containing a table of <code>[Keybind.name] = UIWidget</code>  pairs as its value(s). If we ever have to switch proiles, even when we destroy and recreate <code>Keybinds</code>, this table will let us remember which Keybinds (identified by their category and name) should be re-bound to which widgets, otherwise we’d have no way of knowing.</td>
+</tr>
+<tr>
+<td>keybindsMuted</td>
+<td><code>bool</code></td>
+<td>If true, keybinds which do not have <code>resistsMute = true</code> attr will not do anything when pressed.</td>
+</tr>
+</tbody>
+</table><h2 id="methods">Methods:</h2>
+<ul>
+<li><a href="#initialize">initialize()</a></li>
+<li><a href="#getkeycombomode">getKeyComboMode()</a></li>
+<li><a href="#toggleautoprofileswitching">toggleAutoProfileSwitching()</a></li>
+<li><a href="#togglechatmode">toggleChatMode()</a></li>
+</ul>
+<p><strong>Profile Management:</strong></p>
+<ul>
+<li><a href="#createprofilename">createProfile(name)</a></li>
+<li><a href="#createdefaultprofile">createDefaultProfile()</a></li>
+<li><a href="#getprofilebynamename">getProfileByName(name)</a></li>
+<li><a href="#addprofileprofile">addProfile(profile)</a></li>
+<li><a href="#removeprofileprofile">removeProfile(profile)</a></li>
+</ul>
+<p><strong>Categories:</strong></p>
+<ul>
+<li><a href="#getcategories">getCategories()</a></li>
+<li><a href="#hascategorybynamename">hasCategoryByName(name)</a></li>
+<li><a href="#getcategorybynamename">getCategoryByName(name)</a></li>
+<li><a href="#addcategorycategory">addCategory(category)</a></li>
+</ul>
+<p><strong>Keybinds</strong></p>
+<ul>
+<li><a href="#getkeybindbynamename-categoryname">getKeybindByName(name, categoryname)</a></li>
+<li><a href="#resettodefault">resetToDefault()</a></li>
+<li><a href="#rememberfocusbindingforkeybind">rememberFocusBindingFor(Keybind)</a></li>
+<li><a href="#setassociationbetweenkeybind-widget">setAssociationBetween(Keybind, widget)</a></li>
+</ul>
+<hr>
+<h3 id="initialize">initialize()</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method:</strong> initialize()</p>
+<p><strong>Return:</strong> void</p>
+<p><strong>Description:</strong><br>
+This method does several things, with the goal of preparing the manager for a smooth boot-up:</p>
+<ul>
+<li>Ensures that the <code>/profiles</code> folder, and <code>/profiles/keybinds/</code> aftewards, exist.</li>
+<li>Creates the “Default” <code>KeybindProfile</code>.</li>
+<li>Detects which profiles should exist based on the contents of the <code>/profiles/keybinds</code> folder, and creates <code>KeybindProfile</code> for each of them using their .otml file.</li>
+<li>Checks which one out of those profiles should be loaded, based on cached user info in the <code>keybinds.otml</code> config, and tries to load that one. If it fails, it will go to “Default” <code>keybindProfile</code>.</li>
+</ul>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example:</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">KeybindManager <span class="token operator">=</span> _keybindManager<span class="token punctuation">:</span><span class="token function">create</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment">-- Create singleton.</span>
+KeybindManager<span class="token punctuation">:</span><span class="token function">initialize</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment">-- Start the engines!</span>
+</code></pre>
+<hr>
+<h3 id="createprofilename">createProfile(name)</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: createProfile(<code>string</code> name)</p>
+<p><strong>Return:</strong> <code>KeybindProfile</code> [or <code>nil</code>]</p>
+<p><strong>Description:</strong></p>
+<p>Copies the contents of the current profile’s .otml file, and writes them into a new file by the given <code>name</code> in the same folder. Then, uses that file as a source for creation of a new <code>KeybindProfile</code> with KeybindProfile:generate(). If the creation of the new profile is successful, returns it, otherwise nil.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example:</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua"><span class="token keyword">local</span> profile <span class="token operator">=</span> KeybindManager<span class="token punctuation">:</span><span class="token function">createProfile</span><span class="token punctuation">(</span><span class="token string">"MyNewProfile"</span><span class="token punctuation">)</span>
+<span class="token keyword">if</span> profile <span class="token keyword">then</span>
+	<span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"Hello from "</span> <span class="token operator">..</span> profile<span class="token punctuation">.</span>name <span class="token operator">..</span> <span class="token string">"!"</span><span class="token punctuation">)</span>
+<span class="token keyword">end</span> 
+</code></pre>
+<hr>
+<h3 id="createdefaultprofile">createDefaultProfile()</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: createDefaultProfile()</p>
+<p><strong>Return</strong>: void</p>
+<p><strong>Description</strong>: Generate the “Default” profile and otml file.  The entire system is designed around the fact that <strong>at least</strong> this profile must exist. The profile can not be deleted except by manual intervention of the user and altering of the files, but even in that case, the system should be able to handle its re-creation (see: <a href="#initialize">initialize()</a>).</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	KeybindManager<span class="token punctuation">:</span><span class="token function">createDefaultProfile</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment">-- Creates it and stores it in its own `defaultProfile` attribute.</span>
+	
+	<span class="token function">print</span><span class="token punctuation">(</span>KeybindManager<span class="token punctuation">.</span>defaultProfile<span class="token punctuation">.</span>name<span class="token punctuation">)</span> <span class="token comment">-- "Default"</span>
+</code></pre>
+<hr>
+<h3 id="getprofilebynamename">getProfileByName(name)</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: getProfileByName(<code>string</code> name)</p>
+<p><strong>Return</strong>: <code>KeybindProfile</code> or <code>nil</code></p>
+<p><strong>Description</strong>:  Iterates through the manager’s own <code>profiles</code>  table in search of a registered profile by <code>name</code>. If found, returns it, if not returns nil.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">local</span> p <span class="token operator">=</span> KeybindManager<span class="token punctuation">:</span><span class="token function">getProfileByName</span><span class="token punctuation">(</span><span class="token string">"Default"</span><span class="token punctuation">)</span>
+	<span class="token keyword">if</span> p <span class="token keyword">then</span> 
+		<span class="token function">print</span><span class="token punctuation">(</span>p<span class="token punctuation">.</span>name<span class="token punctuation">)</span> <span class="token comment">-- "Default"</span>
+	<span class="token keyword">end</span>
+</code></pre>
+<hr>
+<h3 id="addprofileprofile">addProfile(profile)</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: addProfile(<code>KeybindProfile</code> profile)</p>
+<p><strong>Return</strong>: <code>bool</code></p>
+<p><strong>Description</strong>:  Attempts to register a <code>KeybindProfile</code> into the manager’s <code>profiles</code> attribute. Only registered profiles are considered valid for use. We can perform validation in this method and avoid registering profiles which fail to pass it. Upon successful registration, it tries to add the profile into the “Profiles” menu in <em>client_options</em> and returns true, else false.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">local</span> prof <span class="token operator">=</span> KeybindManager<span class="token punctuation">:</span><span class="token function">createProfile</span><span class="token punctuation">(</span><span class="token string">"RandomNewProf"</span><span class="token punctuation">)</span>
+	<span class="token keyword">if</span> prof <span class="token keyword">then</span>
+		<span class="token keyword">if</span> KeybindManager<span class="token punctuation">:</span><span class="token function">registerProfile</span><span class="token punctuation">(</span>prof<span class="token punctuation">)</span> <span class="token keyword">then</span> 
+			<span class="token comment">-- Profile registered successfully.</span>
+		<span class="token keyword">end</span>
+	<span class="token keyword">end</span>
+</code></pre>
+<hr>
+<h3 id="removeprofileprofile">removeProfile(profile)</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: removeProfile(<code>KeybindProfile</code> profile)</p>
+<p><strong>Return</strong>:  <code>nil</code></p>
+<p><strong>Description</strong>:  Attempts to find the provided <code>KeybindProfile</code> in the manager’s <code>profiles</code> registrar, and if found, it will be removed from there. Usually only used internally during the profile’s total deletion.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	KeybindManager<span class="token punctuation">:</span><span class="token function">removeProfile</span><span class="token punctuation">(</span><span class="token string">"MyProfile"</span><span class="token punctuation">)</span>
+</code></pre>
+<hr>
+<h3 id="getcategories">getCategories()</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: getCategories()</p>
+<p><strong>Return</strong>:  <code>table</code> of <code>KeybindCategory</code> values.</p>
+<p><strong>Description</strong>:  Retrieves the table of registered categories that’s stored in the manager’s <code>categories</code> attribute.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">local</span> categories <span class="token operator">=</span> KeybindManager<span class="token punctuation">:</span><span class="token function">getCategories</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+	<span class="token keyword">for</span> _<span class="token punctuation">,</span> cat <span class="token keyword">in</span> <span class="token function">pairs</span><span class="token punctuation">(</span>categories<span class="token punctuation">)</span> <span class="token keyword">do</span>
+		<span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"We have a category called "</span> <span class="token operator">..</span>cat<span class="token punctuation">.</span>name<span class="token operator">..</span> <span class="token string">"."</span><span class="token punctuation">)</span>
+	<span class="token keyword">end</span>
+</code></pre>
+<hr>
+<h3 id="hascategorybynamename">hasCategoryByName(name)</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: hasCategoryByName(<code>string</code> name)</p>
+<p><strong>Return</strong>:  <code>bool</code></p>
+<p><strong>Description</strong>:  Checks where a <code>KeybindCategory</code>with a given <code>name</code> can be found in the list of registered <code>categories</code>.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">if</span> KeybindManager<span class="token punctuation">:</span><span class="token function">hasCategoryByName</span><span class="token punctuation">(</span><span class="token string">"Movement"</span><span class="token punctuation">)</span> <span class="token keyword">then</span>
+		<span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"Category [Movement] exists."</span><span class="token punctuation">)</span>
+	<span class="token keyword">end</span>
+</code></pre>
+<hr>
+<h3 id="getcategorybynamename">getCategoryByName(name)</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: getCategoryByName(<code>string</code> name)</p>
+<p><strong>Return</strong>:  <code>KeybindCategory</code> or <code>nil</code></p>
+<p><strong>Description</strong>:  Attempts to find the <code>KeybindCategory</code> with the provided <code>name</code> in the manager’s <code>categories</code> registrar, and if found, returns it, otherwise returns <code>nil</code>.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">local</span> cat <span class="token operator">=</span> KeybindManager<span class="token punctuation">:</span><span class="token function">getCategoryByName</span><span class="token punctuation">(</span><span class="token string">"MyCategory"</span><span class="token punctuation">)</span>
+	<span class="token keyword">if</span> cat <span class="token keyword">then</span>
+		<span class="token function">print</span><span class="token punctuation">(</span>cat<span class="token punctuation">.</span>name<span class="token punctuation">)</span> <span class="token comment">-- "MyCategory"</span>
+	<span class="token keyword">end</span>
+</code></pre>
+<hr>
+<h3 id="addcategorycategory">addCategory(category)</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: addCategory(<code>KeybindCategory</code> category)</p>
+<p><strong>Return</strong>:  <code>void</code></p>
+<p><strong>Description</strong>:  Attempts to register a <code>KeybindCategory</code> into the manager’s <code>categories</code> attribute. Only registered categories are considered valid for use. We can perform validation in this method and avoid registering profiles which fail to pass it.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	KeybindManager<span class="token punctuation">:</span><span class="token function">addCategory</span><span class="token punctuation">(</span><span class="token string">"Necronia Mod"</span><span class="token punctuation">)</span>
+</code></pre>
+<hr>
+<h3 id="getkeybindbynamename-categoryname">getKeybindByName(name, categoryName)</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: getKeybindByName(<code>string</code> name, <code>string</code> categoryName)</p>
+<p><strong>Return</strong>:  <code>Keybind</code> or <code>nil</code></p>
+<p><strong>Description</strong>:  Attempts to find a <code>Keybind</code> by name, in a registered category of provided <code>categoryName</code>, and returns it if found.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">local</span> kb <span class="token operator">=</span> KeybindManager<span class="token punctuation">:</span><span class="token function">getKeybindByName</span><span class="token punctuation">(</span><span class="token string">"Walk North"</span><span class="token punctuation">,</span> <span class="token string">"Movement"</span><span class="token punctuation">)</span>
+	<span class="token keyword">if</span> kb <span class="token keyword">then</span> 
+		<span class="token comment">-- We got the Keybind.</span>
+	<span class="token keyword">end</span> 
+</code></pre>
+<hr>
+<h3 id="getkeycombomode-getchatmode">getKeyComboMode(), getChatMode()</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: getKeyComboMode(), getChatMode()</p>
+<p><strong>Return</strong>:  <code>number</code></p>
+<p><strong>Description</strong>: Returns a number representing which chat mode we’re using. <code>KEYCOMBO_MODE_REGULAR (1)</code> or <code>KEYCOMBO_MODE_ALT (2)</code>, unless something went horribly wrong.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">local</span> mode <span class="token operator">=</span> KeybindManager<span class="token punctuation">:</span><span class="token function">getKeyComboMode</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+	<span class="token keyword">if</span> mode <span class="token operator">==</span> KEYCOMBO_MODE_REGULAR <span class="token keyword">then</span> 
+		<span class="token comment">-- We are using the "Classic" chat mode.</span>
+	<span class="token keyword">else</span>
+		<span class="token comment">-- We are using the "Modern" chat mode.</span>
+	<span class="token keyword">end</span>
+</code></pre>
+<hr>
+<h3 id="resettodefaults">resetToDefaults()</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: resetToDefaults()</p>
+<p><strong>Return</strong>:  <code>void</code></p>
+<p><strong>Description</strong>: Resets <strong>ALL</strong> keybind settings in the currently active profile to their known default combos.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	KeybindManager<span class="token punctuation">:</span><span class="token function">resetToDefaults</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+<hr>
+<h3 id="toggleautoprofileswitching">toggleAutoProfileSwitching()</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: toggleAutoProfileSwitching()</p>
+<p><strong>Return</strong>:  <code>void</code></p>
+<p><strong>Description</strong>: Toggles whether “Profile Auto Switch” will be enabled or not and saves the result into the user local cached settings.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><img src="https://i.imgur.com/ArtdYnJ.png" alt="About Profile Auto Switcher"></p>
+<p><strong>Example</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	KeybindManager<span class="token punctuation">:</span><span class="token function">toggleAutoProfileSwitching</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+<hr>
+<h3 id="togglechatmode">toggleChatMode()</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: toggleChatMode()</p>
+<p><strong>Return</strong>:  <code>void</code></p>
+<p><strong>Description</strong>: Toggles whether “Classic” chat mode will be enabled or not and saves the result into the user local cached settings. Doing this triggers <code>Keybind:updateWidgets()</code> on all <code>Keybind</code>s and automatically flicks the switch in <code>client_options</code>.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><em>What are Chat modes?</em><br>
+<img src="https://i.imgur.com/aN3q3AM.png" alt="About Chat Modes"></p>
+<p><strong>Example</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	KeybindManager<span class="token punctuation">:</span><span class="token function">toggleChatMode</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+<hr>
+<h3 id="setassociationbetweenkeybind-widget">setAssociationBetween(keybind, widget)</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method:</strong> setAssociationBetween( <code>object</code> Keybind, <code>object</code> UIWidget)</p>
+<p><strong>Return:</strong> void</p>
+<p><strong>Description:</strong>  Tells the manager to remember that <code>Keybind</code> (identified by its name and category) is being tracked by <code>UIWidget</code>. <code>UIWidget</code> may receive updates to its labels if our <code>Keybind</code> changes, etc.</p>
+<p>This is useful to remember, because when we are switching Keybind profiles, we are effectively destroying all old Keybinds and data we knew about them. If we want the new set of Keybinds to remember some of their old connections to widgets and so on, we store them here and reconnect them after they’re recreated.</p>
+<p>In order for this to work, the <code>UIWidget</code> <strong>must</strong> implement 2 children, with the IDs: <code>keyCombo</code> and <code>altKeyCombo</code>. These two children will have modifications done to them if the <code>Keybind</code> changes.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example:</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">local</span> myKeybind <span class="token operator">=</span> Keybind<span class="token punctuation">:</span><span class="token function">create</span><span class="token punctuation">(</span>params<span class="token operator">~</span><span class="token punctuation">)</span>
+	<span class="token keyword">local</span> gameHotkey2 <span class="token operator">=</span> rootWidget<span class="token punctuation">:</span><span class="token function">recursiveGetChildById</span><span class="token punctuation">(</span><span class="token string">'gameHotkey2'</span><span class="token punctuation">)</span>
+	 
+	KeybindManager<span class="token punctuation">:</span><span class="token function">setAssociationBetween</span><span class="token punctuation">(</span>myKeybind<span class="token punctuation">,</span> gameHotkey2<span class="token punctuation">)</span> <span class="token comment">-- Now, for example, if myKeybind changes from being bound to `Ctrl+W` to `Shift+W`, gameHotkey2's label will instantly update and show the correct new hotkey.</span>
+</code></pre>
+<hr>
+<h3 id="rememberfocusbindingforkeybind">rememberFocusBindingFor(Keybind)</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method:</strong> rememberFocusBindingFor( <code>object</code> Keybind)</p>
+<p><strong>Return:</strong> void</p>
+<p><strong>Description:</strong>  Tells the manager to remember that <code>Keybind</code> (identified by its name and category) should be bound to the <code>UIWidget</code> stored in the <code>Keybind.bindToWidget</code> attribute of that Keybind.</p>
+<p><em>What this means is: When that Keybind is bound using <code>:bind</code>, the key combination will only trigger its callback if <code>Keybind.bindToWidget</code> is focused. (e.g. Maybe you want to bind ‘Arrow Up’ to move a scrollbar a bit up, but only if the window with that scrollbar is focused, not in any other case).</em></p>
+<p>This is useful to remember, because when we are switching Keybind profiles, we are effectively destroying all old Keybinds and data we knew about them. If we want the new set of Keybinds to remember some of their old connections to widgets and so on, we store them here and reconnect them after they’re recreated.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example:</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">local</span> myKeybind <span class="token operator">=</span> Keybind<span class="token punctuation">:</span><span class="token function">create</span><span class="token punctuation">(</span>params<span class="token operator">~</span><span class="token punctuation">)</span> 
+	myKeybind<span class="token punctuation">:</span><span class="token function">setWidgetToBindTo</span><span class="token punctuation">(</span>widget<span class="token punctuation">)</span> <span class="token comment">-- Calls KeybindManager:rememberFocusBindingFor(myKeybind).</span>
+</code></pre>
+<hr>
+</div>
+</body>
+
+</html>

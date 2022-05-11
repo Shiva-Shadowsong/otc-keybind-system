@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KeybindProfiel</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="class-keybindprofile">Class: KeybindProfile</h1>
+<p>Creates a class <code>KeybindProfile</code>, which represents a wrapper for our currently configured <a href="Keybind-Category">KeybindCategories</a>, the <a href="Keybind">Keybinds</a> within them, and the specific key combo settings used for those keybinds as dictated by the “profile.otml” config file’s contents of this profile.</p>
+<p>The system of KeybindProfile naming <strong>is case-sensitive</strong> and expects <strong>unique</strong> names for KeybindProfiles. The system also creates a <code>name.otml</code> config file.</p>
+<p>Furthermore, the <em>Auto Profile Switcher</em> uses the names (case-insensitive) of Profiles to try and satisfy its condition if auto-switching is turned on.<br>
+<img src="https://i.imgur.com/BiCPTbl.png" alt="how it works"></p>
+<p>When KeybindManager:initialize() is called (the method which initializes the entire Keybind system and is executed while libs are loading), it will <strong>mandate</strong> for a <code>KeybindProfile</code> called “Default” to exist, and <a href="#protect">protect()</a> it as well.</p>
+<h2 id="keybindprofile-object">KeybindProfile Object</h2>
+<h3 id="attributes">Attributes:</h3>
+
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>The name of the Profile. Must be unique (case-sensitive).</td>
+</tr>
+<tr>
+<td>protected</td>
+<td>bool</td>
+<td>Is this profile protected from deletion? By default, only ever true on the “Default” profile.</td>
+</tr>
+<tr>
+<td>config</td>
+<td><code>Config</code></td>
+<td>Refers to the Config object obtained by loading the <code>name</code>.otml file of this profile.</td>
+</tr>
+<tr>
+<td>fullpath</td>
+<td>string</td>
+<td>Holds a string that directs to the location of the .otml file of this Profile relative to the writeDirectory.</td>
+</tr>
+</tbody>
+</table><h3 id="methods">Methods:</h3>
+<ul>
+<li><a href="#activatefirstactivation">activate(firstActivation)</a></li>
+<li><a href="#protect">protect()</a></li>
+<li><a href="#delete">delete()</a></li>
+<li><a href="#selectasoption">selectAsOption()</a></li>
+<li><a href="#injectasoption">injectAsOption()</a></li>
+</ul>
+<p><strong>Getters</strong><br>
+They just return what’s stored in that attribute. See above.</p>
+<ul>
+<li><a href="#getname">getName()</a></li>
+<li><a href="#getconfig">getConfig()</a></li>
+<li><a href="#getfullpath">getFullPath()</a></li>
+</ul>
+<hr>
+<h3 id="activatefirstactivation">activate(firstActivation)</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method:</strong> activate(firstActivation)<br>
+<strong>Params:</strong></p>
+<ul>
+<li>firstActivation- <code>bool</code> (optional)   : Is this the first time (any) profile is being activated in the client? <code>True</code> only in KeybindManager:init() pretty much.</li>
+</ul>
+<p><strong>Return:</strong> <code>void</code></p>
+<p><strong>Description:</strong><br>
+This method does several things with the goal of disposing of/unloading the previously used profile, and loading in the current one on which we’re calling this method. There may be data that needs to be persist between profiles, usually kept in the <a href="Keybind-Manager">Keybind Manager</a>.</p>
+<p>However, this method also handles the case where we are starting completely from scratch, and not switching from another profile. This happens, for example, when we just ran the game.</p>
+<p>Thus, it executes these actions in this order:</p>
+<ul>
+<li>Remove all existing <code>KeybindCategories</code> from the manager. (Since they contain <code>Keybinds</code>, those <code>Keybinds</code> will be gone too).</li>
+<li>Cache the info that we are now using this profile.</li>
+<li>Create categories needed by this profile.</li>
+<li>Create keybinds needed by this profile.</li>
+<li>Update the UI responsible for showing us which profile we’re using.</li>
+</ul>
+<p>While creating categories and keybinds, the following order is followed:</p>
+<pre class=" language-mermaid"><svg id="mermaid-svg-KtLJ0q6nigscAiI8" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="433.01666259765625" style="max-width: 474.816650390625px;" viewBox="0 0 474.816650390625 433.01666259765625"><style>#mermaid-svg-KtLJ0q6nigscAiI8{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;fill:#000000;}#mermaid-svg-KtLJ0q6nigscAiI8 .error-icon{fill:#552222;}#mermaid-svg-KtLJ0q6nigscAiI8 .error-text{fill:#552222;stroke:#552222;}#mermaid-svg-KtLJ0q6nigscAiI8 .edge-thickness-normal{stroke-width:2px;}#mermaid-svg-KtLJ0q6nigscAiI8 .edge-thickness-thick{stroke-width:3.5px;}#mermaid-svg-KtLJ0q6nigscAiI8 .edge-pattern-solid{stroke-dasharray:0;}#mermaid-svg-KtLJ0q6nigscAiI8 .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-svg-KtLJ0q6nigscAiI8 .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-svg-KtLJ0q6nigscAiI8 .marker{fill:#666;stroke:#666;}#mermaid-svg-KtLJ0q6nigscAiI8 .marker.cross{stroke:#666;}#mermaid-svg-KtLJ0q6nigscAiI8 svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:16px;}#mermaid-svg-KtLJ0q6nigscAiI8 .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#000000;}#mermaid-svg-KtLJ0q6nigscAiI8 .cluster-label text{fill:#333;}#mermaid-svg-KtLJ0q6nigscAiI8 .cluster-label span{color:#333;}#mermaid-svg-KtLJ0q6nigscAiI8 .label text,#mermaid-svg-KtLJ0q6nigscAiI8 span{fill:#000000;color:#000000;}#mermaid-svg-KtLJ0q6nigscAiI8 .node rect,#mermaid-svg-KtLJ0q6nigscAiI8 .node circle,#mermaid-svg-KtLJ0q6nigscAiI8 .node ellipse,#mermaid-svg-KtLJ0q6nigscAiI8 .node polygon,#mermaid-svg-KtLJ0q6nigscAiI8 .node path{fill:#eee;stroke:#999;stroke-width:1px;}#mermaid-svg-KtLJ0q6nigscAiI8 .node .label{text-align:center;}#mermaid-svg-KtLJ0q6nigscAiI8 .node.clickable{cursor:pointer;}#mermaid-svg-KtLJ0q6nigscAiI8 .arrowheadPath{fill:#333333;}#mermaid-svg-KtLJ0q6nigscAiI8 .edgePath .path{stroke:#666;stroke-width:1.5px;}#mermaid-svg-KtLJ0q6nigscAiI8 .flowchart-link{stroke:#666;fill:none;}#mermaid-svg-KtLJ0q6nigscAiI8 .edgeLabel{background-color:white;text-align:center;}#mermaid-svg-KtLJ0q6nigscAiI8 .edgeLabel rect{opacity:0.5;background-color:white;fill:white;}#mermaid-svg-KtLJ0q6nigscAiI8 .cluster rect{fill:hsl(210,66.6666666667%,95%);stroke:#26a;stroke-width:1px;}#mermaid-svg-KtLJ0q6nigscAiI8 .cluster text{fill:#333;}#mermaid-svg-KtLJ0q6nigscAiI8 .cluster span{color:#333;}#mermaid-svg-KtLJ0q6nigscAiI8 div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:hsl(-160,0%,93.3333333333%);border:1px solid #26a;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-svg-KtLJ0q6nigscAiI8:root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}#mermaid-svg-KtLJ0q6nigscAiI8 flowchart{fill:apa;}</style><g><g class="output"><g class="clusters"></g><g class="edgePaths"><g class="edgePath LS-A LE-B" style="opacity: 1;" id="L-A-B"><path class="path" d="M237.4083251953125,54.71665954589844L237.4083251953125,79.71665954589844L237.4083251953125,104.71665954589844" marker-end="url(https://stackedit.io/app#arrowhead11)" style="fill:none"></path><defs><marker id="arrowhead11" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1px; stroke-dasharray: 1px, 0px;"></path></marker></defs></g><g class="edgePath LS-B LE-C" style="opacity: 1;" id="L-B-C"><path class="path" d="M237.4083251953125,151.43331909179688L237.4083251953125,176.43331909179688L237.4083251953125,201.43331909179688" marker-end="url(https://stackedit.io/app#arrowhead12)" style="fill:none"></path><defs><marker id="arrowhead12" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1px; stroke-dasharray: 1px, 0px;"></path></marker></defs></g><g class="edgePath LS-C LE-D" style="opacity: 1;" id="L-C-D"><path class="path" d="M237.4083251953125,274.8666534423828L237.4083251953125,299.8666534423828L237.4083251953125,324.8666534423828" marker-end="url(https://stackedit.io/app#arrowhead13)" style="fill:none"></path><defs><marker id="arrowhead13" viewBox="0 0 10 10" refX="9" refY="5" markerUnits="strokeWidth" markerWidth="8" markerHeight="6" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowheadPath" style="stroke-width: 1px; stroke-dasharray: 1px, 0px;"></path></marker></defs></g></g><g class="edgeLabels"><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-A-B" class="edgeLabel L-LS-A' L-LE-B"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-B-C" class="edgeLabel L-LS-B' L-LE-C"></span></div></foreignObject></g></g><g class="edgeLabel" style="opacity: 1;" transform=""><g transform="translate(0,0)" class="label"><rect rx="0" ry="0" width="0" height="0"></rect><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span id="L-L-C-D" class="edgeLabel L-LS-C' L-LE-D"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" style="opacity: 1;" id="flowchart-A-51" transform="translate(237.4083251953125,31.35832977294922)"><rect rx="0" ry="0" x="-229.4083251953125" y="-23.35832977294922" width="458.816650390625" height="46.71665954589844" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-219.4083251953125,-13.358329772949219)"><foreignObject width="438.816650390625" height="26.716659545898438"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Check .otml for a list of Categories that this Profile requires.</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-B-52" transform="translate(237.4083251953125,128.07498931884766)"><rect rx="0" ry="0" x="-183.75833129882812" y="-23.35832977294922" width="367.51666259765625" height="46.71665954589844" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-173.75833129882812,-13.358329772949219)"><foreignObject width="347.51666259765625" height="26.716659545898438"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Ensure that all Default categories were created.</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-C-54" transform="translate(237.4083251953125,238.14998626708984)"><rect rx="0" ry="0" x="-139.0333251953125" y="-36.71666717529297" width="278.066650390625" height="73.43333435058594" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-129.0333251953125,-26.71666717529297)"><foreignObject width="258.066650390625" height="53.43333435058594"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Check .otml for a list of Keybinds<br>that should go into these categories</div></foreignObject></g></g></g><g class="node default" style="opacity: 1;" id="flowchart-D-56" transform="translate(237.4083251953125,374.941650390625)"><rect rx="0" ry="0" x="-203" y="-50.07499694824219" width="406" height="100.14999389648438" class="label-container"></rect><g class="label" transform="translate(0,0)"><g transform="translate(-193,-40.07499694824219)"><foreignObject width="386" height="80.14999389648438"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;">Refer to Default keybind settings for any missing data<br>which we may need to construct these keybinds,<br>and ensure all of these Defaults are loaded.</div></foreignObject></g></g></g></g></g></g></svg></pre>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example:</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">local</span> prof <span class="token operator">=</span> KeybindManager<span class="token punctuation">.</span>defaultProfile
+	prof<span class="token punctuation">:</span><span class="token function">activate</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+<hr>
+<h3 id="protect">protect()</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: protect()</p>
+<p><strong>Return:</strong> <code>bool</code></p>
+<p><strong>Description:</strong>  Sets the <code>protected = true</code> attribute on the profile, denying <a href="#delete">delete()</a> from working on it.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example:</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">local</span> prof <span class="token operator">=</span> KeybindManager<span class="token punctuation">.</span>currentProfile
+	prof<span class="token punctuation">:</span><span class="token function">protect</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+<hr>
+<h3 id="delete">delete()</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: delete()</p>
+<p><strong>Return:</strong> <code>bool</code></p>
+<p><strong>Description:</strong><br>
+Deletes the profile, switching to “Default” if the deleted profile was the currently active one. This removes it from the keybind manager, as well as removing the .otml config associated with this profile. Returns bool whether succesful or not.</p>
+<p>This will fail if used on profiles which have the <code>protected = true</code> attribute.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example:</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">local</span> prof <span class="token operator">=</span> KeybindManager<span class="token punctuation">.</span>currentProfile
+	prof<span class="token punctuation">:</span><span class="token function">delete</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+<hr>
+<h3 id="selectasoption">selectAsOption()</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: selectAsOption()</p>
+<p><strong>Return:</strong> <code>void</code></p>
+<p><strong>Description:</strong><br>
+Selects this profile as the currently selected option in the <code>client_options</code> keybinds GUI, here:</p>
+<p><img src="https://i.imgur.com/pN9yW5p.png" alt="sample"></p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example:</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">local</span> prof <span class="token operator">=</span> KeybindManager<span class="token punctuation">.</span>currentProfile
+	prof<span class="token punctuation">:</span><span class="token function">selectAsOption</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+<hr>
+<h3 id="injectasoption">injectAsOption()</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method</strong>: injectAsOption()</p>
+<p><strong>Return:</strong> <code>void</code></p>
+<p><strong>Description:</strong><br>
+Injects this profile as an available option to choose in the <code>client_options</code> keybinds GUI, here:</p>
+<p><img src="https://i.imgur.com/b3W14qM.png" alt="sample"></p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example:</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">local</span> prof <span class="token operator">=</span> KeybindManager<span class="token punctuation">.</span>currentProfile
+	prof<span class="token punctuation">:</span><span class="token function">injectAsOption</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+</div>
+</body>
+
+</html>

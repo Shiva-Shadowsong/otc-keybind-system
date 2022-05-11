@@ -1,0 +1,6 @@
+Must run
+
+@onLoad:
+
+dofiles 'constants' // Load constants for keybinds first.
+dofiles 'keybinds' // Load keybind stuff LAST after all other, especially UI.

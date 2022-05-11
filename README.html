@@ -1,0 +1,65 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QuickStart</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="documentation">Documentation</h1>
+<p>I suggest reading through this QuickStart to get a general idea, then reading documentation of other classes in this order:</p>
+<ul>
+<li>Keybind</li>
+<li>KeybindCategory</li>
+<li>KeybindProfile</li>
+<li>KeybindManager</li>
+<li>KeybindCapturer</li>
+</ul>
+<h1 id="defaults-configuration">Defaults Configuration</h1>
+<p>First we should configure the initial setup for the keybind system:<br>
+In <code>/core/constants/keybinds</code>-</p>
+<ul>
+<li>Set <code>KB_PROFILES_PATH</code> to a desired location. This is where different profiles will be saved.</li>
+<li><code>KB_CATEGORY_LOAD_ORDER</code> defines the order in which the categories will appear in the Options UI.</li>
+<li><code>KB_CALLBACKS</code> defines all custom callbacks we intend to allow the keybinds to call. Callbacks are anonymous function filled with whatever functionality you want to be available for keybinding.</li>
+<li><code>KB_DEFAULTS</code> defines default categories and the keybinds that will come inside of them, and what they do.</li>
+</ul>
+<h1 id="usage">Usage</h1>
+<p>Find the keybind you wanna use in some script:</p>
+<pre class=" language-lua"><code class="prism  language-lua"><span class="token keyword">local</span> keybind <span class="token operator">=</span> KeybindManager<span class="token punctuation">:</span><span class="token function">getKeybindByName</span><span class="token punctuation">(</span><span class="token string">"Show Necronia Store"</span><span class="token punctuation">,</span> <span class="token string">"Modules"</span><span class="token punctuation">)</span>
+							<span class="token operator">^</span> name		<span class="token operator">^</span> category
+</code></pre>
+<p>Then use:</p>
+<pre class=" language-lua"><code class="prism  language-lua">  keybind<span class="token punctuation">:</span><span class="token function">deactivate</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+  <span class="token comment">-- and</span>
+  keybind<span class="token punctuation">:</span><span class="token function">activate</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+<p>To make it active or not. Usually, you will activate the keybind when the module is loaded in <code>init()</code>, and deactivate it in <code>terminate()</code> if the module is about to perish.</p>
+<p>Of course, you will need to make the interface for editing profiles and keybinds available to players in the Options UI or some other module. For this purpose, I can provide my own example, but you will need to adapt it to your own interface, UIWidgets, etc.</p>
+<p>⚠️⚠️⚠️:</p>
+<p>The method <code>Keybind:injectAsOption()</code> is supposed to inject the UI widget interface for editing that Keybind into some other UI Widget container as a child. You will see that the code for this method is specifically crafted around my own interface. You should adapt it to fit yours.</p>
+<h1 id="dependencies">Dependencies</h1>
+<h3 id="keyboard.lua">Keyboard.lua</h3>
+<p>It has been edited for optimizations and adaptations to the new keybind system.</p>
+<h3 id="options.lua">Options.lua</h3>
+<p>The Keybinds system of course depends a lot on the Options window where the user should set their own preferences, manage profiles, keybinds and more.<br>
+Variables and functions used for this are all found in Options.lua, and I suggest you CTRL+F “keybind” in there to browse various references to it to get a grasp on what’s happening there. I added my entire <code>options.lua</code> for browsing, so make sure to have a look and make an appropriate port of these features to your client.<br>
+Also included is <code>options.otui</code> and <code>keybinds.otui</code> which are UI stylings for the Options Window and the Keybinds panel that should appear inside of it.</p>
+<p>CapturerWindow<br>
+NecroniaStyleContainer</p>
+<h3 id="keybindcapturer">KeybindCapturer</h3>
+<p>Functions for constructing a keybind capturer out of a style are in the KeybindManager. You will need the base style class for this capturer, found in <code>resources/00-keybind_capturer.otui</code>.</p>
+<h3 id="necroniastylecontainer">NecroniaStyleContainer</h3>
+<p>There are multiple references to the <code>NecroniaStyleContainer</code> in the UI styles. This is just a custom ScrollablePanel found in <code>resources/02-necronia_style_container.otui</code>.</p>
+<h1 id="references">References</h1>
+<h3 id="console">Console</h3>
+<p>Console is one of the existing modules that has a lot of custom keybinds bound in it. Modules like this one require their own overrides of possibly existing keybinds (e.g. Arrow Up) for their own custom functionalities when they are focused. It is possible to do this as well with they Keybind system of course, just by using it normally and ensuring the focus on the special module defines whether its Keybinds will :activate() or :deactivate().</p>
+<p>I provided my own Console.lua as a reference.</p>
+<p>Similarly, <code>Terminal</code> is another one.</p>
+</div>
+</body>
+
+</html>

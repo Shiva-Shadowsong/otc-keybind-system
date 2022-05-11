@@ -1,0 +1,199 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KeybindCategory</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="class-keybindcategory">Class: KeybindCategory</h1>
+<p>Creates a class KeybindCategory, which is a manageable category and wrapper for a group of <code>Keybind</code> objects, acting like a container for them.</p>
+<p>The system is designed so that a <code>Keybind</code>'s name is an unique identifier for that keybind <strong>within a Category</strong>. Different categories may have a keybind with the same name.</p>
+<h2 id="keybindcategory-object">KeybindCategory Object</h2>
+<h3 id="attributes">Attributes:</h3>
+
+<table>
+<thead>
+<tr>
+<th>Attribute</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>name</td>
+<td>string</td>
+<td>The name of the Category. Must be unique.</td>
+</tr>
+<tr>
+<td>keybinds</td>
+<td>table with <code>Keybind</code> values</td>
+<td>Table</td>
+</tr>
+</tbody>
+</table><h3 id="methods">Methods:</h3>
+<ul>
+<li><a href="#createname">create(name)</a></li>
+<li><a href="#remove">remove()</a></li>
+<li><a href="#injectasoption">injectAsOption()</a></li>
+</ul>
+<p><strong>Keybind management:</strong></p>
+<ul>
+<li><a href="#addkeybindkeybind">addKeybind()</a></li>
+<li><a href="#getkeybinds">getKeybinds()</a></li>
+<li><a href="#getkeybindbynamename">getKeybindByName(name)</a></li>
+<li><a href="#removekeybindbynamename">removeKeybindByName(name)</a></li>
+</ul>
+<hr>
+<h3 id="createname">create(name)</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method:</strong> create(<code>string</code> name)</p>
+<p><strong>Return:</strong> <code>KeybindCategory</code></p>
+<p><strong>Description:</strong><br>
+Creates an object of this class.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example:</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua"><span class="token keyword">local</span> cat <span class="token operator">=</span> KeybindCategory<span class="token punctuation">:</span><span class="token function">create</span><span class="token punctuation">(</span><span class="token string">"MyNewCategory"</span><span class="token punctuation">)</span>
+</code></pre>
+<hr>
+<h3 id="remove">remove()</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method:</strong> remove()</p>
+<p><strong>Return:</strong> void</p>
+<p><strong>Description:</strong><br>
+Removes all <code>Keybind</code>s from this category’s <code>keybinds</code> list, by executing <code>Keybind:remove()</code> on each of them, which makes sure that each Keybind is gracefully detached from the system and nothing messes up due to their abrupt removal, then makes the <code>keybinds</code> an empty table again.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example:</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua"><span class="token keyword">local</span> cat <span class="token operator">=</span> KeybindManager<span class="token punctuation">:</span><span class="token function">getCategoryByName</span><span class="token punctuation">(</span><span class="token string">"Turning"</span><span class="token punctuation">)</span>
+cat<span class="token punctuation">:</span><span class="token function">remove</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+<hr>
+<h3 id="injectasoption">injectAsOption()</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method:</strong> injectAsOption()</p>
+<p><strong>Return:</strong> void</p>
+<p><strong>Description:</strong><br>
+If <code>client_options</code> is loaded, injects this <code>Category</code> into the UI at that module.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example:</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua"><span class="token keyword">local</span> cat <span class="token operator">=</span> KeybindCategory<span class="token punctuation">:</span><span class="token function">create</span><span class="token punctuation">(</span><span class="token string">"Movement"</span><span class="token punctuation">)</span>
+KeybindManager<span class="token punctuation">:</span><span class="token function">addCategory</span><span class="token punctuation">(</span>cat<span class="token punctuation">)</span>
+
+cat<span class="token punctuation">:</span><span class="token function">injectAsOption</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+<p><img src="https://i.imgur.com/ey8o48n.png" alt="example"></p>
+<hr>
+<h3 id="getkeybinds-">getKeybinds( )</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method:</strong> getKeybinds()</p>
+<p><strong>Return:</strong> <code>table</code> of <code>Keybind</code> objects.</p>
+<p><strong>Description:</strong>  Returns a table of all <code>Keybinds</code> that have been added to this category.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example:</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">local</span> cat <span class="token operator">=</span> KeybindManager<span class="token punctuation">:</span><span class="token function">getCategoryByName</span><span class="token punctuation">(</span><span class="token string">"myCategory"</span><span class="token punctuation">)</span>
+	<span class="token keyword">for</span> _<span class="token punctuation">,</span> keybind <span class="token keyword">in</span> <span class="token function">pairs</span><span class="token punctuation">(</span>cat<span class="token punctuation">:</span><span class="token function">getKeybinds</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token keyword">do</span>
+		<span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"Keybind ["</span> <span class="token operator">..</span> keybind<span class="token punctuation">.</span>name <span class="token operator">..</span> <span class="token string">"] found in this category."</span><span class="token punctuation">)</span>
+	<span class="token keyword">end</span>
+</code></pre>
+<hr>
+<h3 id="getkeybindbynamename">getKeybindByName(name)</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method:</strong> hasKeybindByName(<code>string</code> name)</p>
+<p><strong>Return:</strong> <code>Keybind</code>or <code>nil</code></p>
+<p><strong>Description:</strong>  Checks if there is a <code>Keybind</code> whose name matches the provided <code>name</code> inside this category, and if yes, returns it.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example:</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">local</span> cat <span class="token operator">=</span> KeybindManager<span class="token punctuation">:</span><span class="token function">getCategoryByName</span><span class="token punctuation">(</span><span class="token string">"myCategory"</span><span class="token punctuation">)</span>
+	<span class="token keyword">if</span> cat<span class="token punctuation">:</span><span class="token function">getKeybindByName</span><span class="token punctuation">(</span><span class="token string">"Walk North"</span><span class="token punctuation">)</span> <span class="token keyword">then</span>
+		<span class="token comment">-- Found that keybind in this category.</span>
+	<span class="token keyword">end</span>
+</code></pre>
+<hr>
+<h3 id="removekeybindbynamename">removeKeybindByName(name)</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method:</strong> removeKeybindByName(<code>string</code> name)</p>
+<p><strong>Return:</strong> <code>void</code></p>
+<p><strong>Description:</strong>  Checks if there is a <code>Keybind</code> whose name matches the provided <code>name</code> inside this category, and if yes, executes <code>Keybind:remove()</code> on it.</p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example:</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">local</span> cat <span class="token operator">=</span> KeybindManager<span class="token punctuation">:</span><span class="token function">getCategoryByName</span><span class="token punctuation">(</span><span class="token string">"myCategory"</span><span class="token punctuation">)</span>
+	cat<span class="token punctuation">:</span><span class="token function">removeKeybindByName</span><span class="token punctuation">(</span><span class="token string">"Walk North"</span><span class="token punctuation">)</span> <span class="token comment">-- RIP in pepperoni </span>
+</code></pre>
+<hr>
+<h3 id="addkeybindkeybind">addKeybind(Keybind)</h3>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Method:</strong> addKeybind(<code>Keybind</code> keybind)</p>
+<p><strong>Return:</strong> <code>bool</code></p>
+<p><strong>Description:</strong>  Adds a <code>Keybind</code> into this category’s <code>keybinds</code> table.</p>
+<p>If possible, inserts it at the index which the <code>Keybind.defaultIndex</code> attribute suggested <em>(this helps with sorting default keybinds to always display in the same order in the UI).</em></p>
+<p><em>Use this method as a gate for validating whether Keybinds should be added to the category if you come up with any new rules for that.</em></p>
+<blockquote>
+<blockquote>
+<blockquote></blockquote>
+</blockquote>
+</blockquote>
+<p><strong>Example:</strong></p>
+<pre class=" language-lua"><code class="prism  language-lua">	<span class="token keyword">local</span> kbind <span class="token operator">=</span> Keybind<span class="token punctuation">:</span><span class="token function">create</span><span class="token punctuation">(</span>params<span class="token operator">~</span><span class="token punctuation">)</span>
+	<span class="token keyword">local</span> cat <span class="token operator">=</span> KeybindManager<span class="token punctuation">:</span><span class="token function">getCategoryByName</span><span class="token punctuation">(</span><span class="token string">"myCategory"</span><span class="token punctuation">)</span>
+	cat<span class="token punctuation">:</span><span class="token function">addKeybind</span><span class="token punctuation">(</span>kbind<span class="token punctuation">)</span>
+</code></pre>
+</div>
+</body>
+
+</html>

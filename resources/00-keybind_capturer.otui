@@ -1,0 +1,44 @@
+CapturerWindow < MainWindow
+  id: assignWindow
+  !text: tr('Awaiting Your Input')
+  size: 360 166
+
+  Label
+    id: context
+    text: Default
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
+    margin-left: 10
+    margin-top: 5
+    text-auto-resize: true
+    text-wrap: true
+    text-align: left
+
+  Label
+    id: capturePreview
+    !text: tr('%s', '<press something>')
+    anchors.horizontalCenter: parent.horizontalCenter
+    anchors.top: prev.bottom
+    margin-top: 10
+    text-auto-resize: true
+    color: #72ac4c
+    font: open-sans-16px-bold
+
+  Button
+    id: confirmButton
+    !text: tr('Confirm')
+    width: 64
+    anchors.right: next.left
+    anchors.bottom: parent.bottom
+    margin-right: 10
+    margin-bottom: 5
+
+  Button
+    id: cancelButton
+    !text: tr('Cancel')
+    width: 64
+    anchors.right: parent.right
+    anchors.bottom: parent.bottom
+    margin-right: 5
+    margin-bottom: 5

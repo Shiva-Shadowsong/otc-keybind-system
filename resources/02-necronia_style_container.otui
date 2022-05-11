@@ -1,0 +1,13 @@
+NecroniaStyleContainer < ScrollablePanel
+  background-color: #020a0f60
+  padding-top: 4
+  padding-bottom: 1
+  padding-left: 2
+  border-width-top: 6
+  border-width-left: 4
+  border-width-right: 2
+  border-width-bottom: 2
+  border-color-top: #00010c35
+  border-color-left: #00010c35
+  border-color-right: #274a5775
+  border-color-bottom: #274a5775

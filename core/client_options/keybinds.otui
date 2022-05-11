@@ -1,0 +1,323 @@
+HotkeyNode < UIWidget
+  height: 34
+  border-width-bottom: 1
+  border-color-bottom: #30768F45
+
+  $hover:
+    border-color-bottom: #30768F75
+    background-color: #00000031
+  $!hover:
+    border-color-bottom: #30768F45
+    background-color: alpha
+
+  UIWidget
+    id: leftCompartment
+    anchors.left: parent.left
+    width: 285
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    phantom: true
+    Label
+      id: hotkeyName
+      text: hotkeyName
+      anchors.left: parent.left
+      anchors.right: parent.right
+      anchors.verticalCenter: parent.verticalCenter
+      text-auto-resize: true
+      text-align: left
+      text-wrap: true
+      margin-left: 20
+  UIWidget
+    id: middleCompartment
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    width: 330
+    anchors.left: leftCompartment.right
+    $hover:
+      border-color-bottom: #30768F75
+      background-color: #00000031
+    $!hover:
+      border-color-bottom: #30768F45
+      background-color: alpha
+    UIButton
+      id: keyCombo
+      anchors.left: parent.left
+      anchors.right: parent.horizontalCenter
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      text-align: center
+      text: keyCombo
+      image-color: #0F111A
+      IconPen
+        phantom: true
+        size: 18 18
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        image-color: #CCCCCC66
+      $hover:
+        background-color: #00000031
+      $!hover:
+        background-color: alpha
+    UIButton
+      id: altKeyCombo
+      anchors.right: parent.right
+      anchors.left: parent.horizontalCenter
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      text-align: center
+      image-color: #0F111A
+      text: altKeyCombo
+      $hover:
+        background-color: #00000031
+      $!hover:
+        background-color: alpha
+      IconPen
+        phantom: true
+        size: 18 18
+        anchors.right: parent.right
+        anchors.verticalCenter: parent.verticalCenter
+        image-color: #CCCCCC66
+  UIWidget
+    id: rightCompartment
+    anchors.left: middleCompartment.right
+    anchors.top: parent.top
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    phantom: true
+    Button
+      id: resetButton
+      anchors.right: parent.right
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      margin-top: 4
+      margin-bottom: 4
+      margin-right: 8
+      width: 36
+      !tooltip: tr('Reset to Default')
+      IconReverse
+        phantom: true
+        size: 18 18
+        anchors.centerIn: parent
+        image-color: #d74430
+    Button
+      id: clearButton
+      anchors.right: prev.left
+      anchors.top: parent.top
+      anchors.bottom: parent.bottom
+      margin-top: 4
+      margin-bottom: 4
+      margin-right: 6
+      width: 36
+      !tooltip: tr('Clear Current Bind')
+      IconEraser
+        phantom: true
+        size: 18 18
+        anchors.centerIn: parent
+
+HotkeyTitle < UIWidget
+  color: #F0AD4D
+  background-color: #00000031
+  height: 33
+  border-width-top: 2
+  border-color-top: #00010c45
+  border-width-bottom: 3
+  border-color-bottom: #30768F65
+  font: open-sans-16px-bold
+  text-align: center
+
+Panel
+  margin-bottom: 10
+  NecroniaStyleContainer
+    id: profilesPanel
+    anchors.left: parent.left
+    anchors.right: parent.right
+    anchors.top: parent.top
+    height: 40
+    padding: 8
+    Button
+      id: deleteProfile
+      anchors.right: parent.right
+      anchors.verticalCenter: parent.verticalCenter
+      size: 60 20
+      text: Delete
+      margin-right: 3
+    Button
+      id: createProfile
+      anchors.right: prev.left
+      anchors.verticalCenter: parent.verticalCenter
+      size: 60 20
+      text: Create
+      margin-right: 6
+    CheckBox
+      id: tryAutoSwitchCheckbox
+      anchors.right: prev.left
+      anchors.verticalCenter: parent.verticalCenter
+      text: Auto-Switch
+      margin-right: 28
+      size: 74 20
+    HelpButton
+      anchors.left: parent.left
+      anchors.top: parent.top
+      !tooltip: tr('A [Keybind Profile] holds all the configuration about Keybinds and Action Bars in a single place.\nWhen switched to, a [Keybind Profile] will automatically apply the saved settings.\nAny change to keybind configurations is  instantly saved to your current profile.')
+    Label
+      anchors.left: prev.right
+      text: Profiles:
+      margin-left: 4
+      anchors.verticalCenter: prev.verticalCenter
+    ComboBoxRounded
+      id: profilePicker
+      anchors.left: prev.right
+      anchors.top: parent.top
+      anchors.right: tryAutoSwitchCheckbox.left
+      margin-left: 6
+      margin-right: 6
+
+  NecroniaStyleContainer
+    id: modePanel
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 12
+    height: 80
+    padding: 8
+    HelpButton
+      id: modePanelHelp
+      anchors.left: parent.left
+      anchors.verticalCenter: parent.verticalCenter
+      size: 32 32
+    Label
+      font: open-sans-16px-bold
+      anchors.left: prev.right
+      anchors.verticalCenter: prev.verticalCenter
+      margin-left: 10
+      !text: tr('Chat Mode:')
+    HDCheckBox
+      id: useChatMode
+      !text: tr('Classic')
+      width: 120
+      anchors.verticalCenter: prev.verticalCenter
+      anchors.left: prev.right
+      margin-left: 200
+      margin-bottom: 8
+    HDCheckBox
+      id: useNoChatMode
+      !text: tr('Modern')
+      width: 120
+      anchors.verticalCenter: prev.verticalCenter
+      anchors.left: prev.right
+      margin-left: 36
+  NecroniaStyleContainer
+    id: searchPanel
+    anchors.top: prev.bottom
+    anchors.left: parent.left
+    anchors.right: parent.right
+    margin-top: 12
+    height: 39
+    padding-left: 15
+    padding-right: 15
+    padding-bottom: 5
+    Button
+      id: clearSearchButton
+      anchors.right: parent.right
+      anchors.verticalCenter: parent.verticalCenter
+      height: 30
+      margin-top: 4
+      margin-bottom: 4
+      margin-right: 6
+      width: 36
+      !tooltip: tr('Reset Search')
+      IconEraser
+        phantom: true
+        size: 18 18
+        anchors.centerIn: parent
+    Label
+      font: open-sans-16px-bold
+      anchors.left: parent.left
+      anchors.verticalCenter: prev.verticalCenter
+      margin-left: 2
+      !text: tr('Search:')
+    TextEdit
+      id: searchBox
+      anchors.left: prev.right
+      anchors.verticalCenter: prev.verticalCenter
+      margin-left: 8
+      text-align: left
+      height: 30
+      anchors.right: clearSearchButton.left
+      @onTextChange: modules.client_options.keybindsSearchboxChange(self)
+      margin-right: 10
+      border: 1 #30768F45
+  VerticalScrollBar
+    id: keybindsscroll
+    anchors.top: content.top
+    anchors.right: parent.right
+    anchors.bottom : content.bottom
+    step: 23
+    pixels-scroll: true
+  NecroniaStyleContainer
+    id: content
+    margin-top: 7
+    margin-right: 16
+    padding: 6
+    vertical-scrollbar: keybindsscroll
+    anchors.left: parent.left
+    anchors.bottom: parent.bottom
+    anchors.right: parent.right
+    anchors.top: searchPanel.bottom
+    background: #00000023
+    border-width: 3
+    layout:
+      type: verticalBox
+    UIWidget
+      id: permanentHeading
+      height: 20
+      UIWidget
+        anchors.left: parent.left
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        width: 285
+        Label
+          text: Action
+          anchors.left: parent.left
+          anchors.right: parent.right
+          anchors.verticalCenter: parent.verticalCenter
+          text-auto-resize: true
+          text-align: left
+          text-wrap: true
+          margin-left: 20
+          color: #CCCCCC66
+      UIWidget
+        anchors.left: prev.right
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        width: 330
+        Label
+          text: Key (Classic)
+          anchors.left: parent.left
+          anchors.right: parent.horizontalCenter
+          anchors.verticalCenter: parent.verticalCenter
+          text-auto-resize: true
+          text-align: center
+          text-wrap: true
+          color: #CCCCCC66
+        Label
+          text: Key (Modern)
+          anchors.right: parent.right
+          anchors.left: parent.horizontalCenter
+          anchors.verticalCenter: parent.verticalCenter
+          text-auto-resize: true
+          text-align: center
+          text-wrap: true
+          color: #CCCCCC66
+        HelpButton
+          anchors.left: parent.horizontalCenter
+          anchors.verticalCenter: parent.verticalCenter
+          margin-left: 148
+          !tooltip: tr('Depending on which Chat mode you are using, a different set of keys is applied.')
+      Button
+        id: resetAllButton
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        margin-right: 6
+        text: Reset ALL

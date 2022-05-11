@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KeybindCapturer</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><p><strong>CaptureWindow</strong> extends MainWindow.</p>
+<p>Use this widget when you need to spawn a window that will capture a key press from the user.<br>
+The Keybind Manager grants a method which can be used for generic Keybind capturing and comes rather preconfigured to spare you the work. If you need to further customize it, or customize a Capturer from scratch, you may do that as well.</p>
+<h4 id="example">Example:</h4>
+<pre class=" language-lua"><code class="prism  language-lua">    <span class="token keyword">local</span> capturer <span class="token operator">=</span> KeybindManager<span class="token punctuation">:</span><span class="token function">createCapturer</span><span class="token punctuation">(</span><span class="token string">"Press a combination of keys to use as your keybind:"</span><span class="token punctuation">,</span> <span class="token keyword">function</span><span class="token punctuation">(</span>capturedKeyCombo<span class="token punctuation">)</span>
+      <span class="token function">print</span><span class="token punctuation">(</span><span class="token string">"Captured: "</span> <span class="token operator">..</span> capturedKeyCombo<span class="token punctuation">)</span>
+    <span class="token keyword">end</span><span class="token punctuation">)</span>
+</code></pre>
+<p><img src="https://i.imgur.com/rUIqawe.png" alt="Example"></p>
+</div>
+</body>
+
+</html>
